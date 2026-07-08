@@ -63,7 +63,7 @@ app.post('/api/compile/paste', (req, res) => {
 function compileFile(cppPath, jobId, res) {
   const exePath = path.join(OUTPUT_DIR, `${jobId}.exe`);
 
-  exec(`g++ "${cppPath}" -o "${exePath}" -static`, { timeout: 30000 }, (error, stdout, stderr) => {
+  exec(`x86_64-w64-mingw32-g++ "${cppPath}" -o "${exePath}" -static`, { timeout: 30000 }, (error, stdout, stderr) => {
     if (error) {
       cleanup(cppPath);
       return res.json({ success: false, output: stderr || error.message });
