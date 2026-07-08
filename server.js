@@ -89,7 +89,7 @@ app.post('/api/compile/project', (req, res) => {
         for (const entry of entries) {
           const full = path.join(dir, entry.name);
           if (entry.isDirectory()) collectCpp(full);
-          else if (entry.name.endsWith('.cpp')) cppFiles.push(full);
+          else if (entry.name.endsWith('.cpp') || entry.name.endsWith('.cc')) cppFiles.push(full);
         }
       }
       collectCpp(projectDir);
@@ -101,7 +101,10 @@ app.post('/api/compile/project', (req, res) => {
 
       const exePath = path.join(OUTPUT_DIR, `${jobId}.exe`);
       const filesStr = cppFiles.map(f => `"${f}"`).join(' ');
-      exec(`"${GPP}" ${filesStr} -o "${exePath}" -static`, { timeout: 60000 }, (error, stdout, stderr) => {
+      const libsDir = path.join(projectDir, 'libs');
+      const libsInclude = fs.existsSync(libsDir) ? `-I"${libsDir}"` : '';
+      const winLibs = `-ladvapi32 -lole32 -lshell32 -lshlwapi -luser32 -lversion -loleaut32 -luuid -lrpcrt4`;
+      exec(`"${GPP}" -I"${projectDir}" ${libsInclude} ${filesStr} -o "${exePath}" -static ${winLibs}`, { timeout: 60000 }, (error, stdout, stderr) => {
         cleanup(projectDir);
         if (error) {
           return res.json({ success: false, output: stderr || error.message });
