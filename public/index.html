@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C++ to EXE Converter</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>C++ to EXE <span class="accent">Converter</span></h1>
+    <p class="subtitle">Upload a <code>.cpp</code> file, drag & drop, or paste your code</p>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="upload">Upload File</button>
+      <button class="tab" data-tab="paste">Paste Code</button>
+    </div>
+
+    <div class="tab-content active" id="tab-upload">
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-content">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <p class="drop-text">Drag & drop your <code>.cpp</code> file here</p>
+          <p class="drop-or">or</p>
+          <button class="btn" id="fileBtn">Choose File</button>
+          <input type="file" id="fileInput" accept=".cpp" hidden>
+          <p class="file-name" id="fileName"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-paste">
+      <div class="paste-area">
+        <div class="paste-header">
+          <input type="text" id="filenameInput" class="filename-input" placeholder="main.cpp" value="main.cpp">
+          <span class="badge">.cpp</span>
+        </div>
+        <textarea id="codeArea" class="code-area" placeholder="// Paste your C++ code here...&#10;#include &lt;iostream&gt;&#10;&#10;int main() {&#10;    std::cout &lt;&lt; &quot;Hello, World!&quot; &lt;&lt; std::endl;&#10;    return 0;&#10;}"></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-convert" id="convertBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+        <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"/>
+      </svg>
+      Convert to EXE
+    </button>
+
+    <div class="status" id="status">
+      <div class="status-content">
+        <div class="spinner" id="spinner"></div>
+        <p id="statusText">Ready</p>
+      </div>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-icon success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <p class="result-text">Compilation successful!</p>
+      <a class="btn btn-download" id="downloadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download EXE
+      </a>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
