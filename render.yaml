@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: cpp-to-exe
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
