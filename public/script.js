@@ -1,13 +1,22 @@
 let selectedFile = null;
+let selectedZip = null;
 let isCompiling = false;
 
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 const fileBtn = document.getElementById('fileBtn');
 const fileName = document.getElementById('fileName');
+
+const projectDropZone = document.getElementById('projectDropZone');
+const projectInput = document.getElementById('projectInput');
+const projectBtn = document.getElementById('projectBtn');
+const projectFileName = document.getElementById('projectFileName');
+
 const fileTab = document.querySelector('[data-tab="upload"]');
+const projectTab = document.querySelector('[data-tab="project"]');
 const pasteTab = document.querySelector('[data-tab="paste"]');
 const fileTabContent = document.getElementById('tab-upload');
+const projectTabContent = document.getElementById('tab-project');
 const pasteTabContent = document.getElementById('tab-paste');
 const codeArea = document.getElementById('codeArea');
 const filenameInput = document.getElementById('filenameInput');
@@ -22,33 +31,35 @@ const downloadBtn = document.getElementById('downloadBtn');
 let lastJobId = null;
 
 fileBtn.addEventListener('click', () => fileInput.click());
-
 fileInput.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) handleFileSelect(file);
 });
-
 dropZone.addEventListener('click', () => fileInput.click());
-
-dropZone.addEventListener('dragover', (e) => {
-  e.preventDefault();
-  dropZone.classList.add('dragover');
-});
-
-dropZone.addEventListener('dragleave', () => {
-  dropZone.classList.remove('dragover');
-});
-
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
 dropZone.addEventListener('drop', (e) => {
   e.preventDefault();
   dropZone.classList.remove('dragover');
   const file = e.dataTransfer.files[0];
-  if (file && file.name.endsWith('.cpp')) {
-    handleFileSelect(file);
-  } else {
-    fileName.textContent = 'Please drop a .cpp file';
-    fileName.style.color = '#ff6b6b';
-  }
+  if (file && file.name.endsWith('.cpp')) handleFileSelect(file);
+  else { fileName.textContent = 'Please drop a .cpp file'; fileName.style.color = '#ff6b6b'; }
+});
+
+projectBtn.addEventListener('click', () => projectInput.click());
+projectInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) handleZipSelect(file);
+});
+projectDropZone.addEventListener('click', () => projectInput.click());
+projectDropZone.addEventListener('dragover', (e) => { e.preventDefault(); projectDropZone.classList.add('dragover'); });
+projectDropZone.addEventListener('dragleave', () => { projectDropZone.classList.remove('dragover'); });
+projectDropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  projectDropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.name.endsWith('.zip')) handleZipSelect(file);
+  else { projectFileName.textContent = 'Please drop a .zip file'; projectFileName.style.color = '#ff6b6b'; }
 });
 
 codeArea.addEventListener('input', updateConvertBtn);
@@ -62,20 +73,37 @@ function handleFileSelect(file) {
   updateConvertBtn();
 }
 
+function handleZipSelect(file) {
+  selectedZip = file;
+  projectFileName.textContent = file.name;
+  projectFileName.style.color = '#6c5ce7';
+  projectInput.value = '';
+  updateConvertBtn();
+}
+
+function getActiveTab() {
+  if (fileTabContent.classList.contains('active')) return 'upload';
+  if (projectTabContent.classList.contains('active')) return 'project';
+  return 'paste';
+}
+
 function updateConvertBtn() {
-  const hasFile = selectedFile !== null;
-  const hasPaste = codeArea.value.trim().length > 0;
-  const isUploadTab = fileTabContent.classList.contains('active');
-  convertBtn.disabled = !((isUploadTab && hasFile) || (!isUploadTab && hasPaste));
+  const tab = getActiveTab();
+  if (tab === 'upload') convertBtn.disabled = !selectedFile;
+  else if (tab === 'project') convertBtn.disabled = !selectedZip;
+  else convertBtn.disabled = !codeArea.value.trim();
 }
 
 fileTab.addEventListener('click', () => switchTab('upload'));
+projectTab.addEventListener('click', () => switchTab('project'));
 pasteTab.addEventListener('click', () => switchTab('paste'));
 
 function switchTab(tab) {
   fileTab.classList.toggle('active', tab === 'upload');
+  projectTab.classList.toggle('active', tab === 'project');
   pasteTab.classList.toggle('active', tab === 'paste');
   fileTabContent.classList.toggle('active', tab === 'upload');
+  projectTabContent.classList.toggle('active', tab === 'project');
   pasteTabContent.classList.toggle('active', tab === 'paste');
   updateConvertBtn();
   hideAll();
@@ -90,17 +118,19 @@ convertBtn.addEventListener('click', async () => {
   setProgress(30);
 
   try {
-    const isUploadTab = fileTabContent.classList.contains('active');
+    const tab = getActiveTab();
     let response;
 
-    if (isUploadTab && selectedFile) {
-      const formData = new FormData();
-      formData.append('file', selectedFile);
+    if (tab === 'upload' && selectedFile) {
+      const fd = new FormData();
+      fd.append('file', selectedFile);
       setProgress(50);
-      response = await fetch('/api/compile/upload', {
-        method: 'POST',
-        body: formData
-      });
+      response = await fetch('/api/compile/upload', { method: 'POST', body: fd });
+    } else if (tab === 'project' && selectedZip) {
+      const fd = new FormData();
+      fd.append('file', selectedZip);
+      setProgress(50);
+      response = await fetch('/api/compile/project', { method: 'POST', body: fd });
     } else {
       const code = codeArea.value;
       const fn = filenameInput.value.trim() || 'main.cpp';

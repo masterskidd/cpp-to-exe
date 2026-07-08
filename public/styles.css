@@ -117,6 +117,12 @@ h1 {
   margin-bottom: 16px;
 }
 
+.drop-hint {
+  color: #555;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+}
+
 .file-name {
   margin-top: 12px;
   color: #6c5ce7;

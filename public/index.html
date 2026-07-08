@@ -9,10 +9,11 @@
 <body>
   <div class="container">
     <h1>C++ to EXE <span class="accent">Converter</span></h1>
-    <p class="subtitle">Upload a <code>.cpp</code> file, drag & drop, or paste your code</p>
+    <p class="subtitle">Upload <code>.cpp</code> files, a whole project ZIP, or paste your code</p>
 
     <div class="tabs">
-      <button class="tab active" data-tab="upload">Upload File</button>
+      <button class="tab active" data-tab="upload">Single File</button>
+      <button class="tab" data-tab="project">Project ZIP</button>
       <button class="tab" data-tab="paste">Paste Code</button>
     </div>
 
@@ -29,6 +30,25 @@
           <button class="btn" id="fileBtn">Choose File</button>
           <input type="file" id="fileInput" accept=".cpp" hidden>
           <p class="file-name" id="fileName"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-project">
+      <div class="drop-zone" id="projectDropZone">
+        <div class="drop-zone-content">
+          <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="12" y1="18" x2="12" y2="12"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+          </svg>
+          <p class="drop-text">Upload a <code>.zip</code> of your whole C++ project</p>
+          <p class="drop-hint">All <code>.cpp</code> files in subfolders are included</p>
+          <p class="drop-or">or</p>
+          <button class="btn" id="projectBtn">Choose ZIP</button>
+          <input type="file" id="projectInput" accept=".zip" hidden>
+          <p class="file-name" id="projectFileName"></p>
         </div>
       </div>
     </div>
